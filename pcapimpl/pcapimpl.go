@@ -3,12 +3,14 @@ package pcapimpl
 import (
 	"errors"
 	"fmt"
+	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 )
 
 type Dumper struct {
 	dataSourceHandler *pcap.Handle
 	devName           string
+	stopCh            chan struct{}
 }
 
 func (this *Dumper) ToString() string {
@@ -44,12 +46,36 @@ func (this *Dumper) Run() {
 		this.emitError("请先指定一个数据源(一个网卡或者pcap文件),再执行dump run命令")
 		return
 	}
-
-	go func() {
-
-	}()
+	this.stopCh = make(chan struct{}, 0)
+	go this.dumpThread()
 }
 
 func (this *Dumper) emitError(errorText string) {
 	fmt.Println(errorText)
+}
+func (this *Dumper) emitInfo(errorText string) {
+	fmt.Println(errorText)
+}
+
+func (this *Dumper) dumpThread() {
+	dataSource := gopacket.NewPacketSource(this.dataSourceHandler, this.dataSourceHandler.LinkType())
+	this.emitInfo("==========抓包进程启动....")
+	for {
+		select {
+		case pack := <-dataSource.Packets():
+			this.parse(pack)
+		case <-this.stopCh:
+			goto stop
+		}
+	}
+stop:
+	this.emitInfo("==========抓包进程结束")
+}
+
+func (this Dumper) parse(pack gopacket.Packet) {
+	fmt.Println(pack.Dump())
+}
+
+func (this Dumper) RegisterParser(func(gopacket.Packet)) {
+	return
 }

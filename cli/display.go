@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"PcapLib/pcapimpl"
 	"fmt"
 	"github.com/google/gopacket/pcap"
 	"os"
+	"pcapdump/pcapimpl"
 )
 
 func ShowDevList() {

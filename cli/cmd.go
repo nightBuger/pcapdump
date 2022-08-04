@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"PcapLib/pcapimpl"
 	"fmt"
 	"github.com/chzyer/readline"
 	"os"
+	"pcapdump/pcapimpl"
 )
 
 var completer = readline.NewPrefixCompleter()
@@ -70,7 +70,7 @@ func help([]string) {
 func dump(subCmd []string) {
 	switch {
 	case len(subCmd) == 0 || subCmd[0] == "run":
-		fmt.Println(globalDumper.ToString())
+		globalDumper.Run()
 	case subCmd[0] == "show":
 		fmt.Println(globalDumper.ToString())
 	default:
