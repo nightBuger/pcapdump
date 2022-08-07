@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/chzyer/readline"
 	"os"
+	"pcapdump/parser/v2v"
 	"pcapdump/pcapimpl"
 )
 
@@ -18,7 +19,7 @@ func init() {
 	child = append(child,
 		readline.PcItem("interface",
 			readline.PcItem("list"),
-			readline.PcItem("set", readline.PcItemDynamic(globalDumper.GetDevNameSlice)),
+			readline.PcItem("set", readline.PcItemDynamic(pcapimpl.GetDevNameSlice)),
 		))
 	method["interface"] = inter
 
@@ -35,16 +36,22 @@ func init() {
 	//dump命令
 	child = append(child,
 		readline.PcItem("dump",
-			readline.PcItem("show")))
+			readline.PcItem("show"),
+			readline.PcItem("run"),
+			readline.PcItem("stop"),
+		))
 	method["dump"] = dump
 
+	//应用上述设置
 	completer.SetChildren(child)
+	//注册自定义解码器
+	globalDumper.RegisterParser(v2v.V2V1LayerType)
 }
 
 func inter(subCmd []string) {
 	switch {
 	case len(subCmd) == 0 || subCmd[0] == "list":
-		ShowDevList()
+		showDevList()
 	case subCmd[0] == "set":
 		if len(subCmd) == 1 {
 			fmt.Println("set 模式需指定网卡名字,使用Tab键自动补全")
@@ -73,6 +80,8 @@ func dump(subCmd []string) {
 		globalDumper.Run()
 	case subCmd[0] == "show":
 		fmt.Println(globalDumper.ToString())
+	case subCmd[0] == "stop":
+		globalDumper.Stop()
 	default:
 		fmt.Println("dump 没有该模式", subCmd[0])
 	}

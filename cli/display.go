@@ -7,7 +7,7 @@ import (
 	"pcapdump/pcapimpl"
 )
 
-func ShowDevList() {
+func showDevList() {
 	devs, err := pcapimpl.GetDeviceList()
 	if err != nil {
 		fmt.Println("无法获取网卡列表,err:", err.Error())

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func printByteToHex(arr []byte) {
+func PrintByteToHex(arr []byte) {
 	for i := 0; i < len(arr); i++ {
 		fmt.Printf("%02x ", arr[i])
 	}
