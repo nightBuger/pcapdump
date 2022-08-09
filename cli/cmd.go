@@ -45,7 +45,7 @@ func init() {
 	//应用上述设置
 	completer.SetChildren(child)
 	//注册自定义解码器
-	globalDumper.RegisterParser(v2v.V2V1LayerType)
+	globalDumper.RegisterParser(v2v.V2VEthType)
 }
 
 func inter(subCmd []string) {
