@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/gopacket"
-	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
+	"pcapdump/parser/v2v"
 )
 
 type Dumper struct {
@@ -94,20 +94,14 @@ stop:
 
 func (this *Dumper) parse(pack gopacket.Packet) {
 
-	ethLayer := pack.Layer(layers.LayerTypeEthernet)
+	ethLayer := pack.Layer(v2v.V2VEthType)
 	if ethLayer == nil {
 		return
 	}
-	fmt.Println("ethLayer header:")
-	PrintByteToHex(ethLayer.LayerContents())
-	v2vLayer := pack.Layer(this.layerType)
+	v2vLayer := pack.Layer(v2v.V2V1LayerType)
 	if v2vLayer == nil {
-		fmt.Println("不是视联网包")
 		return
-	} else {
-		fmt.Println("真的是视联网包!!!")
 	}
-
 	return
 }
 
