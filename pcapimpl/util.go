@@ -4,11 +4,12 @@ import (
 	"fmt"
 )
 
-func PrintByteToHex(arr []byte) {
+func PrintByteToHex(arr []byte) string {
+	var ret string
 	for i := 0; i < len(arr); i++ {
-		fmt.Printf("%02x ", arr[i])
+		ret += fmt.Sprintf("%02x ", arr[i])
 	}
-	fmt.Println()
+	return ret
 }
 
 func getDevNameSlice() (devnames []string, err error) {

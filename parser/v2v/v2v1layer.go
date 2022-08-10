@@ -51,7 +51,7 @@ func (this *V2V1Layer) WhichPacketType() PacketType {
 func DecodeV2V1Layer(data []byte, p gopacket.PacketBuilder) error {
 	//fmt.Println("在这解析!!!")
 	if len(data) < HeaderSize() {
-		return errors.New("V2V交换协议长度不足")
+		return errors.New("")
 	}
 	var layer V2V1Layer = V2V1Layer{
 		Header:  data[0:HeaderSize()],
@@ -59,9 +59,8 @@ func DecodeV2V1Layer(data []byte, p gopacket.PacketBuilder) error {
 	}
 
 	if layer.WhichPacketType() == UnknowPacket {
-
-		return errors.New("未知的V2V交换协议")
+		return errors.New("")
 	}
 	p.AddLayer(&layer)
-	return nil
+	return p.NextDecoder(V2V2LayerType)
 }

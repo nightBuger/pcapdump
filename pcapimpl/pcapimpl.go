@@ -98,10 +98,48 @@ func (this *Dumper) parse(pack gopacket.Packet) {
 	if ethLayer == nil {
 		return
 	}
-	v2vLayer := pack.Layer(v2v.V2V1LayerType)
-	if v2vLayer == nil {
+	v2v1Layer := pack.Layer(v2v.V2V1LayerType)
+	if v2v1Layer == nil {
 		return
 	}
+	v2v2Layer := pack.Layer(v2v.V2V2LayerType)
+	if v2v2Layer == nil {
+		return
+	}
+
+	//转换interface到真实的指针类型
+	pEth := ethLayer.(*v2v.V2VEth)
+	pV1 := v2v1Layer.(*v2v.V2V1Layer)
+	pV2 := v2v2Layer.(*v2v.V2V2Layer)
+
+	//check合法包
+	switch pV1.WhichPacketType() {
+	case v2v.LinkPacket:
+		switch pV2.CmdId {
+		case v2v.V2VLink:
+		case v2v.V2VLinkRes:
+		case v2v.V2VAuth:
+		case v2v.V2VAuthRes:
+		case v2v.V2VLogin:
+		case v2v.V2VLoginRes:
+		default:
+			return
+		}
+	case v2v.UniCastPacket:
+		switch pV2.CmdId {
+		case v2v.V2VHeart:
+		case v2v.V2VHeartRes:
+		default:
+			return
+		}
+	}
+	fmt.Printf("dst:%s src:%s type:%d",
+		PrintByteToHex(pEth.EthDst),
+		PrintByteToHex(pEth.EthSrc),
+		pV2.CmdId)
+	//filter过滤器
+
+	// dispaly部分
 	return
 }
 

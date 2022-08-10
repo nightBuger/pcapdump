@@ -21,7 +21,7 @@ func init() {
 			readline.PcItem("list"),
 			readline.PcItem("set", readline.PcItemDynamic(pcapimpl.GetDevNameSlice)),
 		))
-	method["interface"] = inter
+	method["interface"] = interface_
 
 	//quit和exit命令
 	child = append(child, readline.PcItem("quit"))
@@ -48,7 +48,7 @@ func init() {
 	globalDumper.RegisterParser(v2v.V2VEthType)
 }
 
-func inter(subCmd []string) {
+func interface_(subCmd []string) {
 	switch {
 	case len(subCmd) == 0 || subCmd[0] == "list":
 		showDevList()

@@ -48,6 +48,9 @@ func DecodeV2VEth(data []byte, p gopacket.PacketBuilder) error {
 }
 
 func getEthType(data []byte) (uint16, uint32) {
+	if len(data) < 18 {
+		return ETHUNKNOWN, 0
+	}
 	var ethType uint16
 	ethType = binary.BigEndian.Uint16(data[12:14])
 	headerSize := EthHeaderSize // 不带vlan时 标准
