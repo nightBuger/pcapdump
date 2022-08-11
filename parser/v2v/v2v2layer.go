@@ -15,16 +15,20 @@ type V2V2Layer struct {
 type Cmd uint16
 
 const (
-	V2VUnknownCmd Cmd = 0x0000
-	V2VLink       Cmd = 0x0001
-	V2VLinkRes    Cmd = 0x1001
-	V2VAuth       Cmd = 0x0002
-	V2VAuthRes    Cmd = 0x1002
-	V2VLogin      Cmd = 0x0003
-	V2VLoginRes   Cmd = 0x1003
-	V2VHeart      Cmd = 0x2001
-	V2VHeartRes   Cmd = 0x3001
+	V2VUnknownCmd Cmd = 0x0000 // 未知包
+	V2VLink       Cmd = 0x0001 // 设备连接 入网请求
+	V2VLinkRes    Cmd = 0x1001 // 设备连接响应
+	V2VAuth       Cmd = 0x0002 // 设备认证
+	V2VAuthRes    Cmd = 0x1002 // 设备认证响应
+	V2VLogin      Cmd = 0x0003 // 设备入网
+	V2VLoginRes   Cmd = 0x1003 // 设备入网响应
+	V2VHeart      Cmd = 0x2001 // 入网心跳
+	V2VHeartRes   Cmd = 0x3001 // 入网心跳响应
 )
+
+func V2V2HeaderSize() uint32 {
+	return 2
+}
 
 func (this *V2V2Layer) LayerType() gopacket.LayerType { return V2V2LayerType }
 func (this *V2V2Layer) LayerContents() []byte         { return this.Header }
@@ -64,7 +68,7 @@ func getV2V2Cmd(data []byte) Cmd {
 }
 
 func newV2V2Layer(data []byte) *V2V2Layer {
-	if len(data) < 2 {
+	if uint32(len(data)) < V2V2HeaderSize() {
 		return nil
 	}
 	cmdId := getV2V2Cmd(data)
@@ -72,8 +76,8 @@ func newV2V2Layer(data []byte) *V2V2Layer {
 		return nil
 	}
 	ret := &V2V2Layer{
-		Header:  data[0:2],
-		Payload: data[2:],
+		Header:  data[0:V2V2HeaderSize()],
+		Payload: data[V2V2HeaderSize():],
 	}
 	ret.CmdId = cmdId
 	return ret

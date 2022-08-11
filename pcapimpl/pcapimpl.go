@@ -133,13 +133,16 @@ func (this *Dumper) parse(pack gopacket.Packet) {
 			return
 		}
 	}
-	fmt.Printf("dst:%s src:%s type:%d",
+	//filter过滤器
+	if pV1.WhichPacketType() != v2v.UniCastPacket {
+		return
+	}
+	// dispaly部分
+	fmt.Printf("dst=%s src=%s type=0x%02x cmd=0x%04x\n",
 		PrintByteToHex(pEth.EthDst),
 		PrintByteToHex(pEth.EthSrc),
+		pV1.WhichPacketType(),
 		pV2.CmdId)
-	//filter过滤器
-
-	// dispaly部分
 	return
 }
 

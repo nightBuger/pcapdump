@@ -34,7 +34,7 @@ const (
 
 const headerSize int = 22
 
-func HeaderSize() int {
+func V2V1HeaderSize() int {
 	return headerSize
 }
 
@@ -50,12 +50,12 @@ func (this *V2V1Layer) WhichPacketType() PacketType {
 
 func DecodeV2V1Layer(data []byte, p gopacket.PacketBuilder) error {
 	//fmt.Println("在这解析!!!")
-	if len(data) < HeaderSize() {
+	if len(data) < V2V1HeaderSize() {
 		return errors.New("")
 	}
 	var layer V2V1Layer = V2V1Layer{
-		Header:  data[0:HeaderSize()],
-		Payload: data[HeaderSize():],
+		Header:  data[0:V2V1HeaderSize()],
+		Payload: data[V2V1HeaderSize():],
 	}
 
 	if layer.WhichPacketType() == UnknowPacket {

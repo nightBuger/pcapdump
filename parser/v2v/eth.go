@@ -25,6 +25,9 @@ const (
 const (
 	EthHeaderSize     uint32 = 14
 	EthVlanHeaderSize uint32 = 18
+	EthMacSize        uint32 = 6
+	EthTypeSize       uint32 = 2
+	EthVlanSize       uint32 = 4
 )
 
 func (this *V2VEth) LayerType() gopacket.LayerType { return V2VEthType }
@@ -48,14 +51,14 @@ func DecodeV2VEth(data []byte, p gopacket.PacketBuilder) error {
 }
 
 func getEthType(data []byte) (uint16, uint32) {
-	if len(data) < 18 {
+	if uint32(len(data)) < EthVlanHeaderSize {
 		return ETHUNKNOWN, 0
 	}
 	var ethType uint16
-	ethType = binary.BigEndian.Uint16(data[12:14])
+	ethType = binary.BigEndian.Uint16(data[EthMacSize*2 : EthMacSize*2+EthTypeSize])
 	headerSize := EthHeaderSize // 不带vlan时 标准
 	if ethType == ETH8100 {
-		ethType = binary.BigEndian.Uint16(data[16:18])
+		ethType = binary.BigEndian.Uint16(data[EthMacSize*2+EthVlanSize : EthMacSize*2+EthVlanHeaderSize+EthTypeSize])
 		headerSize = EthVlanHeaderSize
 	}
 	switch ethType {
@@ -76,8 +79,8 @@ func newV2VEthLayer(data []byte) *V2VEth {
 		return nil
 	}
 	ret := &V2VEth{
-		EthSrc: data[6:12],
-		EthDst: data[0:6],
+		EthSrc: data[EthMacSize : EthMacSize*2],
+		EthDst: data[0:EthMacSize],
 	}
 	ret.EthType = ethType
 	ret.Header = data[0:size]
