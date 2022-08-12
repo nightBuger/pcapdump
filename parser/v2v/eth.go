@@ -34,6 +34,20 @@ func (this *V2VEth) LayerType() gopacket.LayerType { return V2VEthType }
 func (this *V2VEth) LayerContents() []byte         { return this.Header }
 func (this *V2VEth) LayerPayload() []byte          { return this.Payload }
 
+func (this *V2VEth) GenDecodeFunc(lt gopacket.LayerType) gopacket.DecodeFunc {
+	return func(data []byte, p gopacket.PacketBuilder) error {
+		layer := newV2VEthLayer(data)
+		if layer == nil {
+			return errors.New("")
+		}
+		p.AddLayer(layer)
+		if lt < 0 {
+			return nil
+		}
+		return p.NextDecoder(lt)
+	}
+}
+
 var (
 	V2VEthType = gopacket.RegisterLayerType(1000, gopacket.LayerTypeMetadata{
 		Name:    "V2VEthType",

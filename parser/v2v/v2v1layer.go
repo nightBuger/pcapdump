@@ -14,6 +14,27 @@ func (this *V2V1Layer) LayerType() gopacket.LayerType { return V2V1LayerType }
 func (this *V2V1Layer) LayerContents() []byte         { return this.Header }
 func (this *V2V1Layer) LayerPayload() []byte          { return this.Payload }
 
+func (this *V2V1Layer) GenDecodeFunc(lt gopacket.LayerType) gopacket.DecodeFunc {
+	return func(data []byte, p gopacket.PacketBuilder) error {
+		if len(data) < V2V1HeaderSize() {
+			return errors.New("")
+		}
+		var layer V2V1Layer = V2V1Layer{
+			Header:  data[0:V2V1HeaderSize()],
+			Payload: data[V2V1HeaderSize():],
+		}
+
+		if layer.WhichPacketType() == UnknowPacket {
+			return errors.New("")
+		}
+		p.AddLayer(&layer)
+		if lt < 0 {
+			return nil
+		}
+		return p.NextDecoder(lt)
+	}
+}
+
 var (
 	V2V1LayerType = gopacket.RegisterLayerType(1001, gopacket.LayerTypeMetadata{
 		Name:    "V2V1LayerType",
