@@ -65,6 +65,7 @@ func StartCli() {
 
 		cmdSlice := strings.Fields(line)
 		if len(cmdSlice) == 0 {
+			Clear()
 			continue
 		}
 		cmd, ok := method[cmdSlice[0]]

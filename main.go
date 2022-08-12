@@ -1,6 +1,8 @@
 package main
 
-import "pcapdump/cli"
+import (
+	"pcapdump/cli"
+)
 
 func main() {
 	cli.StartCli()

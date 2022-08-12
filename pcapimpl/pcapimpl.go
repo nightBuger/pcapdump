@@ -138,6 +138,7 @@ func (this *Dumper) parse(pack gopacket.Packet) {
 		return
 	}
 	// dispaly部分
+
 	fmt.Printf("dst=%s src=%s type=0x%02x cmd=0x%04x\n",
 		PrintByteToHex(pEth.EthDst),
 		PrintByteToHex(pEth.EthSrc),
