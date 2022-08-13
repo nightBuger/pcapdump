@@ -48,6 +48,10 @@ func (this *V2VEth) GenDecodeFunc(lt gopacket.LayerType) gopacket.DecodeFunc {
 	}
 }
 
+func (this *V2VEth) GetDecodeName() string {
+	return "V2VEthType"
+}
+
 var (
 	V2VEthType = gopacket.RegisterLayerType(1000, gopacket.LayerTypeMetadata{
 		Name:    "V2VEthType",
